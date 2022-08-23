@@ -1,20 +1,16 @@
 package com.pucpr.puckotlin02
 
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.bind.annotation.RestController
-import java.util.*
-import javax.websocket.server.PathParam
-import javax.xml.stream.events.Characters
 
 
 @RestController
 @RequestMapping("/api")
 class Exercicio_02 {
-//    Faça um form/serviço onde o usuário possa entrar com números separados por ';' e o servidor retorne;
+    //    Faça um form/serviço onde o usuário possa entrar com números separados por ';' e o servidor retorne;
 //
 //
 //    Os números em ordem crescente;
@@ -24,30 +20,47 @@ class Exercicio_02 {
 //    Os números pares;
     @GetMapping("number")
     @ResponseBody
-    fun number (@RequestParam
-                    (name = "num", required = false, defaultValue = "get") num: String): List<String>{
-    val list : MutableList<Char> = mutableListOf()
-    num.forEach {
-        if(it !=';'){
-            list.add(it)
-        }
-    }
-    val ordemcrescente = list.sorted()
-    val ordemdecrecente = list.sortedDescending()
-    val pares = numPar(list)
-    val result = listOf("1-Ordem Crescente $ordemcrescente","2-Ordem Decrescente $ordemdecrecente", "3-Números Pares $pares")
-    return result
+    fun number(
+        @RequestParam
+            (name = "num", required = false, defaultValue = "get") num: String
+    ): List<String> {
+        val list: MutableList<Int> = convert(num)
+        val ordemcrescente = list.sorted()
+        val ordemdecrecente = list.sortedDescending()
+        val pares = numPar(list)
+        return listOf(
+            "1-Ordem Crescente $ordemcrescente",
+            "2-Ordem Decrescente $ordemdecrecente",
+            "3-Números Pares $pares"
+        )
     }
 
-    private fun numPar(list: MutableList<Char>): MutableList<Char> {
-        val listaPares: MutableList<Char> = mutableListOf()
+    private fun convert(num: String): MutableList<Int> {
+        val list: MutableList<Int> = mutableListOf()
+        var aux = false
+        var number = ""
+        num.forEach {
+            if (it != ';') {
+                number += it
+            }else aux = !aux
+            if(aux){
+                list.add(number.toInt())
+                number = ""
+                aux = false
+            }
+        }
+        list.add(number.toInt())
+        print(list)
+        return list
+    }
+
+    private fun numPar(list: MutableList<Int>): MutableList<Int> {
+        val listaPares: MutableList<Int> = mutableListOf()
         list.forEach{
-            if((Character.digit(it,10)%2)==0){
+            if((it%2)==0){
                 listaPares.add(it)
             }
         }
-        print(listaPares)
-        print(list)
         return listaPares
     }
 //    @GetMapping("num/{text}")
